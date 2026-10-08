@@ -8,7 +8,7 @@ const keys=new Set(),mouse={x:W/2,y:H/2};
 addEventListener("keydown",e=>{const k=e.key.toLowerCase();keys.add(k);if(["a","d","e","f","arrowleft","arrowright"].includes(k))e.preventDefault();if(k==="e")interact();if(k==="f")toggleLight()});
 addEventListener("keyup",e=>keys.delete(e.key.toLowerCase()));
 addEventListener("mousemove",e=>{mouse.x=e.clientX;mouse.y=e.clientY});slot.onclick=toggleLight;
-const world={w:3200,floor:690},player={x:340,y:574,w:82,h:116,speed:270,health:100,maxHealth:100,coins:0,dir:1,walk:0,hidden:false,hideProgress:0},cam={x:0},lamp={on:true,battery:100,max:100,drain:100/240};
+const world={w:3200,floor:690},player={x:340,y:574,w:82,h:116,speed:270,health:100,maxHealth:100,coins:0,dir:1,walk:0,hideState:"none",hideProgress:0,hideStartX:0,hideTargetX:0},cam={x:0},lamp={on:true,battery:100,max:100,drain:100/240};
 let room=1,msg="",msgTime=0;
 function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
 function say(t){msg=t;msgTime=1}
@@ -46,21 +46,22 @@ let objects=randomRoomObjects();
 function dist(o){return Math.hypot(player.x+41-o.x-o.w/2,player.y+58-o.y-o.h/2)}
 function drawer(t){let b=-1,bd=1e9;for(let i=0;i<3;i++){if(t.drawers[i].open)continue;const d=Math.hypot(player.x+41-t.x-115,player.y+58-t.y-28-i*22);if(d<bd){bd=d;b=i}}return b}
 function target(){let b=null,bd=125;for(const o of objects){if(o.type==="battery"&&o.taken)continue;if(o.type==="table"&&drawer(o)<0)continue;if(o.type==="door"&&Math.abs(player.x+41-o.x-o.w/2)>220)continue;const d=dist(o);if(d<bd){bd=d;b=o}}return b}
-function enterWardrobe(o){if(player.hidden)return;player.hidden=true;player.hideProgress=0;o.hiding=true;lamp.on=false}
-function leaveWardrobe(){if(!player.hidden)return;player.hidden=false;player.hideProgress=0;const o=objects.find(v=>v.type==="wardrobe"&&v.hiding);if(o)o.hiding=false}
+function enterWardrobe(o){if(player.hideState!=="none")return;player.hideState="in";player.hideProgress=0;player.hideStartX=player.x;player.hideTargetX=o.x+o.w/2-player.w/2;o.hiding=true;lamp.on=false}
+function leaveWardrobe(){if(player.hideState!=="hidden")return;player.hideState="out";player.hideProgress=1;player.hideStartX=player.x;player.hideTargetX=player.x+(player.dir>=0?105:-105);const o=objects.find(v=>v.type==="wardrobe"&&v.hiding);if(o)o.hiding=false}
 function interact(){
- if(player.hidden){leaveWardrobe();return}
+ if(player.hideState==="hidden"){leaveWardrobe();return}
+ if(player.hideState!=="none")return
  const o=target();
  if(!o)return;
  if(o.type==="table"){const i=drawer(o);o.drawers[i].open=true;if(o.drawers[i].loot){o.drawers[i].loot=0;coin();say("Coin collected")}else say("Empty drawer")}
  else if(o.type==="wardrobe")enterWardrobe(o);
  else if(o.type==="battery"){o.taken=true;lamp.battery=Math.min(lamp.max,lamp.battery+40);say("Battery +40%")}
- else if(o.type==="door"){o.open=true;nextRoom()}
+ else if(o.type==="door")return
 }
 function nextRoom(){
  room++;
  player.x=180;
- player.hidden=false;
+ player.hideState="none";
  player.hideProgress=0;
  objects=randomRoomObjects();
  say("Room "+room);
@@ -68,16 +69,25 @@ function nextRoom(){
 function toggleLight(){if(player.hidden)return;if(lamp.on){lamp.on=false;say("Flashlight off")}else if(lamp.battery>0){lamp.on=true;say("Flashlight on")}else say("Battery empty")}
 function hud(){batteryBar.style.width=Math.max(0,lamp.battery)+"%";state.textContent=lamp.on?"USED":"NOT USED";slot.classList.toggle("active",lamp.on);slot.classList.toggle("empty",lamp.battery<=0)}
 function update(dt){
- if(player.hidden){
-  player.hideProgress=Math.min(1,player.hideProgress+dt*3);
+ if(player.hideState==="in"){
+  player.hideProgress=Math.min(1,player.hideProgress+dt*2.5);
+  player.x=player.hideStartX+(player.hideTargetX-player.hideStartX)*player.hideProgress;
   player.y=world.floor-player.h;
+  if(player.hideProgress>=1)player.hideState="hidden";
+ }else if(player.hideState==="hidden"){
+  player.y=world.floor-player.h;
+ }else if(player.hideState==="out"){
+  player.hideProgress=Math.max(0,player.hideProgress-dt*2.5);
+  player.x=player.hideStartX+(player.hideTargetX-player.hideStartX)*(1-player.hideProgress);
+  player.y=world.floor-player.h;
+  if(player.hideProgress<=0)player.hideState="none";
  }else{
   let dx=(keys.has("d")||keys.has("arrowright"))-(keys.has("a")||keys.has("arrowleft"));
   if(dx){player.x+=dx*player.speed*dt;player.dir=dx;player.walk+=dt*10}else player.walk+=dt*2;
   player.x=clamp(player.x,60,world.w-player.w-70);
   player.y=world.floor-player.h;
   const door=objects.find(o=>o.type==="door");
-  if(door&&!door.open&&player.x+player.w>door.x-75)door.open=true;
+  if(door&&!door.open&&player.x+player.w>door.x-90)door.open=true;
   if(door&&door.open&&player.x>door.x+80)nextRoom();
  }
  if(lamp.on){lamp.battery=Math.max(0,lamp.battery-lamp.drain*dt);if(lamp.battery===0){lamp.on=false;say("Flashlight battery empty")}}
@@ -113,10 +123,10 @@ function drawDoor(o){
 }
 function drawRig(){
  const x=player.x+41,y=player.y+116,moving=keys.has("a")||keys.has("d")||keys.has("arrowleft")||keys.has("arrowright"),s=moving?Math.sin(player.walk)*12:0;
- const hide=player.hidden?Math.min(1,player.hideProgress):0;
+ const hide=player.hideState==="in"?player.hideProgress:player.hideState==="hidden"?1:player.hideState==="out"?player.hideProgress:0;
  ctx.save();ctx.translate(x,y);
  if(player.dir<0)ctx.scale(-1,1);
- ctx.translate(0,hide*72);
+ ctx.translate((player.hideState==="in"||player.hideState==="out")?0:0,hide*42);
  ctx.globalAlpha=1-hide;
  ctx.fillStyle="#17843d";
  ctx.save();ctx.translate(-12,-35);ctx.rotate(s*Math.PI/180);ctx.fillRect(-9,0,18,35);ctx.restore();
