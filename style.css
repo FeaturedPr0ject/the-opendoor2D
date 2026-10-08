@@ -1,13 +1,17 @@
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#090909;font-family:Arial,sans-serif}
 body{touch-action:none}
-#game{display:block;width:100%;height:100%;cursor:none}
+#game{display:block;width:100%;height:100%;cursor:default}
 #hud{position:fixed;inset:0;pointer-events:none}
 .coinHud{position:absolute;top:16px;right:22px;display:flex;align-items:center;gap:7px;color:#fff;font-size:18px;font-weight:700;text-shadow:0 2px 5px #000}
 .coinIcon{font-size:18px}
 .healthHud{position:absolute;left:22px;bottom:22px;width:180px;height:10px;border-radius:3px;background:rgba(255,255,255,.12);border:1px solid rgba(255,244,190,.75);overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.5)}
 #healthBar{width:100%;height:100%;background:#f3df9b;transition:width .15s linear}
-.itemBar{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);display:flex;justify-content:center}
-.itemSlot{width:58px;height:58px;border-radius:8px;border:2px solid rgba(255,255,255,.35);background:rgba(18,18,18,.82);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 14px rgba(0,0,0,.5)}
-.itemSlot.active{border-color:rgba(255,255,255,.9)}
+.batteryHud{position:absolute;left:22px;bottom:42px;width:180px;height:5px;border-radius:3px;background:rgba(255,255,255,.12);border:1px solid rgba(255,244,190,.35);overflow:hidden}
+#batteryBar{width:100%;height:100%;background:#e9d58d;transition:width .12s linear}
+.itemBar{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:flex;justify-content:center}
+.itemSlot{width:64px;height:64px;border-radius:9px;border:2px solid rgba(255,255,255,.38);background:rgba(18,18,18,.86);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 14px rgba(0,0,0,.5);pointer-events:auto;cursor:pointer;position:relative}
+.itemSlot.active{border-color:rgba(255,255,255,.95);box-shadow:0 0 16px rgba(255,224,150,.22)}
+.itemSlot.empty{opacity:.55}
 .flashlightIcon{font-size:29px}
+#flashlightState{position:absolute;left:50%;top:67px;transform:translateX(-50%);font-size:8px;letter-spacing:.08em;color:#ddd;white-space:nowrap}
