@@ -9,12 +9,9 @@
 <body>
 <canvas id="game"></canvas>
 <div id="hud">
-  <div class="topbar">
-    <div class="room">ROOM <span id="roomNumber">1</span></div>
-    <div class="coins">🪙 <span id="coinCount">0</span></div>
-    <div class="healthWrap"><div id="healthBar"></div></div>
-  </div>
-  <div id="hint">WASD to move · Mouse to look · E to interact</div>
+  <div class="coinHud"><span class="coinIcon">🪙</span><span id="coinCount">0</span></div>
+  <div class="healthHud"><div id="healthBar"></div></div>
+  <div class="itemBar"><div class="itemSlot active"><span class="flashlightIcon">🔦</span></div></div>
 </div>
 <script src="game.js"></script>
 </body>
