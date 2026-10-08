@@ -243,7 +243,7 @@ function update(dt){
   player.x=clamp(player.x,60,world.width-player.w-80);
   player.y=world.floorY-player.h;
 
-  const targetCamera=player.x-width*0.38;
+  const targetCamera=player.x-width*0.42;
   camera.x+=(clamp(targetCamera,0,Math.max(0,world.width-width))-camera.x)*Math.min(1,dt*7);
 
   canvas.style.cursor=getInteractable()?"pointer":"none";
@@ -357,6 +357,23 @@ function drawDoor(o){
 
   ctx.fillStyle="#d0a25a";
   ctx.fillRect(o.x+o.w-24,o.y+o.h/2,10,10);
+
+  const labelW=72;
+  const labelH=42;
+  const labelX=o.x+o.w/2-labelW/2;
+  const labelY=o.y-62;
+
+  ctx.fillStyle="#d8d2c7";
+  ctx.fillRect(labelX,labelY,labelW,labelH);
+  ctx.strokeStyle="#4a4640";
+  ctx.lineWidth=3;
+  ctx.strokeRect(labelX,labelY,labelW,labelH);
+
+  ctx.fillStyle="#171615";
+  ctx.font="bold 24px Arial";
+  ctx.textAlign="center";
+  ctx.textBaseline="middle";
+  ctx.fillText(String(room),o.x+o.w/2,labelY+labelH/2);
 }
 
 function drawPlayer(){
@@ -367,32 +384,55 @@ function drawPlayer(){
   ctx.translate(px,py);
   ctx.scale(player.facing,1);
 
-  ctx.fillStyle="#e7c7a3";
-  ctx.beginPath();
-  ctx.arc(0,-22,15,0,Math.PI*2);
-  ctx.fill();
+  ctx.fillStyle="#e6b98c";
+  ctx.fillRect(-15,-52,30,30);
 
-  ctx.fillStyle="#222";
-  ctx.fillRect(-18,-6,36,43);
+  ctx.fillStyle="#3b241b";
+  ctx.fillRect(-16,-56,32,9);
+  ctx.fillRect(-16,-50,7,10);
+  ctx.fillRect(9,-50,7,10);
 
-  ctx.fillStyle="#555";
-  ctx.fillRect(-16,0,10,38);
-  ctx.fillRect(6,0,10,38);
+  ctx.fillStyle="#f0c9a0";
+  ctx.fillRect(-5,-40,5,4);
+  ctx.fillRect(6,-40,5,4);
 
-  const angle=Math.atan2(pointer.y-height/2,pointer.x-width/2);
+  ctx.fillStyle="#2b6f9e";
+  ctx.fillRect(-18,-22,36,31);
+
+  ctx.fillStyle="#1f4f72";
+  ctx.fillRect(-18,4,36,8);
+
+  ctx.fillStyle="#e6b98c";
+  ctx.fillRect(-29,-20,11,30);
+  ctx.fillRect(18,-20,11,30);
+
+  ctx.fillStyle="#d7d7d7";
+  ctx.fillRect(-12,12,10,36);
+  ctx.fillRect(2,12,10,36);
+
+  ctx.fillStyle="#252525";
+  ctx.fillRect(-14,46,13,8);
+  ctx.fillRect(1,46,13,8);
+
+  const playerScreenX=player.x-camera.x+player.w/2;
+  const playerScreenY=player.y+player.h/2;
+  const angle=Math.atan2(pointer.y-playerScreenY,pointer.x-playerScreenX);
+
   ctx.save();
   ctx.rotate(angle);
   ctx.fillStyle="#bda36d";
-  ctx.fillRect(10,-4,34,8);
+  ctx.fillRect(20,-4,34,8);
   ctx.restore();
 
   ctx.restore();
 }
 
 function drawLight(){
-  const sx=player.x-camera.x+player.w/2;
+  const sx=player.x+player.w/2;
   const sy=player.y+player.h/2;
-  const angle=Math.atan2(pointer.y-height/2,pointer.x-width/2);
+  const playerScreenX=player.x-camera.x+player.w/2;
+  const playerScreenY=player.y+player.h/2;
+  const angle=Math.atan2(pointer.y-playerScreenY,pointer.x-playerScreenX);
 
   const g=ctx.createRadialGradient(sx,sy,30,sx,sy,260);
   g.addColorStop(0,"rgba(255,245,210,.18)");
