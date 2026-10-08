@@ -28,6 +28,33 @@ function drawWardrobe(o){ctx.fillStyle="#5a3525";ctx.fillRect(o.x,o.y,o.w,o.h);c
 function drawCoin(x,y){ctx.fillStyle="#e8c04c";ctx.beginPath();ctx.arc(x,y,12,0,7);ctx.fill();ctx.fillStyle="#8d6815";ctx.font="bold 13px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("$",x,y)}
 function drawDoor(o){ctx.fillStyle="#2d1a10";ctx.fillRect(o.x,o.y,o.w,o.h);ctx.strokeStyle="#684329";ctx.lineWidth=6;ctx.strokeRect(o.x,o.y,o.w,o.h);ctx.fillStyle="#d8d2c7";ctx.fillRect(o.x+18,o.y+70,o.w-36,70);ctx.strokeStyle="#4a4640";ctx.lineWidth=3;ctx.strokeRect(o.x+18,o.y+70,o.w-36,70);ctx.fillStyle="#171615";ctx.font="bold 42px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(room,o.x+o.w/2,o.y+105)}
 function drawRig(){const x=player.x+41,y=player.y+116,moving=keys.has("a")||keys.has("d")||keys.has("arrowleft")||keys.has("arrowright"),s=moving?Math.sin(player.walk)*18:0;ctx.save();ctx.translate(x,y);if(player.dir<0)ctx.scale(-1,1);ctx.fillStyle="#176c38";ctx.save();ctx.translate(-14,-35);ctx.rotate(s*Math.PI/180);ctx.fillRect(-9,0,18,35);ctx.restore();ctx.save();ctx.translate(14,-35);ctx.rotate(-s*Math.PI/180);ctx.fillRect(-9,0,18,35);ctx.restore();ctx.fillStyle="#1687d2";ctx.fillRect(-25,-77,50,43);ctx.fillStyle="#ffd23f";ctx.save();ctx.translate(-32,-70);ctx.rotate(-s*.8*Math.PI/180);ctx.fillRect(-7,0,14,39);ctx.restore();ctx.save();ctx.translate(32,-70);ctx.rotate(s*.8*Math.PI/180);ctx.fillRect(-7,0,14,39);ctx.restore();ctx.fillStyle="#f4c32e";ctx.fillRect(-18,-103,36,26);ctx.fillStyle="#191919";ctx.fillRect(-9,-95,4,4);ctx.fillRect(5,-95,4,4);ctx.fillRect(-7,-85,14,3);if(lamp.on){ctx.fillStyle="#d6d6d6";ctx.fillRect(36,-52,7,25);ctx.fillStyle="#fff0a0";ctx.beginPath();ctx.arc(40,-54,5,0,7);ctx.fill()}ctx.restore()}
-function lighting(){if(!lamp.on)return;const sx=player.x+41-cam.x,sy=player.y+52,a=Math.atan2(mouse.y-sy,mouse.x-sx),len=400*(.55+lamp.battery/lamp.max*.45);ctx.save();ctx.fillStyle="rgba(0,0,0,.7)";ctx.fillRect(0,0,W,H);ctx.globalCompositeOperation="destination-out";const g=ctx.createRadialGradient(sx+Math.cos(a)*90,sy+Math.sin(a)*90,5,sx+Math.cos(a)*140,sy+Math.sin(a)*140,len);g.addColorStop(0,"rgba(0,0,0,.98)");g.addColorStop(.2,"rgba(0,0,0,.82)");g.addColorStop(.55,"rgba(0,0,0,.35)");g.addColorStop(1,"rgba(0,0,0,0)");ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(sx,sy);ctx.arc(sx,sy,len,a-.48,a+.48);ctx.closePath();ctx.fill();ctx.globalCompositeOperation="source-over";ctx.restore()}
+const lightCanvas=document.createElement("canvas"),lightCtx=lightCanvas.getContext("2d");
+function lighting(){
+ if(!lamp.on)return;
+ lightCanvas.width=Math.ceil(W*dpr);
+ lightCanvas.height=Math.ceil(H*dpr);
+ lightCtx.setTransform(dpr,0,0,dpr,0,0);
+ lightCtx.clearRect(0,0,W,H);
+ lightCtx.fillStyle="rgba(0,0,0,.72)";
+ lightCtx.fillRect(0,0,W,H);
+ const sx=player.x+41-cam.x,sy=player.y+52;
+ const a=Math.atan2(mouse.y-sy,mouse.x-sx);
+ const len=400*(.55+lamp.battery/lamp.max*.45);
+ lightCtx.save();
+ lightCtx.globalCompositeOperation="destination-out";
+ const g=lightCtx.createRadialGradient(sx+Math.cos(a)*90,sy+Math.sin(a)*90,5,sx+Math.cos(a)*140,sy+Math.sin(a)*140,len);
+ g.addColorStop(0,"rgba(0,0,0,1)");
+ g.addColorStop(.18,"rgba(0,0,0,.9)");
+ g.addColorStop(.5,"rgba(0,0,0,.4)");
+ g.addColorStop(1,"rgba(0,0,0,0)");
+ lightCtx.fillStyle=g;
+ lightCtx.beginPath();
+ lightCtx.moveTo(sx,sy);
+ lightCtx.arc(sx,sy,len,a-.48,a+.48);
+ lightCtx.closePath();
+ lightCtx.fill();
+ lightCtx.restore();
+ ctx.drawImage(lightCanvas,0,0,W,H);
+}
 function scene(){ctx.fillStyle="#151515";ctx.fillRect(0,0,W,H);ctx.save();ctx.translate(-cam.x,0);ctx.fillStyle="#1d1c1c";ctx.fillRect(0,0,world.w,world.floor);for(let x=0;x<world.w;x+=160){ctx.fillStyle=x%320?"#242222":"#292727";ctx.fillRect(x,0,2,world.floor)}ceiling();ctx.fillStyle="#0a0a0a";ctx.fillRect(0,world.floor,world.w,H-world.floor);ctx.fillStyle="#3a3531";ctx.fillRect(0,world.floor-10,world.w,10);objects.forEach(o=>{if(o.type==="table")drawTable(o);if(o.type==="wardrobe")drawWardrobe(o);if(o.type==="coin"&&!o.taken)drawCoin(o.x+14,o.y+14);if(o.type==="door")drawDoor(o)});drawRig();ctx.restore();lighting()}
 let last=performance.now();function loop(t){const dt=Math.min((t-last)/1000,.05);last=t;update(dt);scene();healthBar.style.width=player.health/player.maxHealth*100+"%";if(msgTime>0){ctx.fillStyle="#fff";ctx.font="bold 16px Arial";ctx.textAlign="center";ctx.fillText(msg,W/2,80)}requestAnimationFrame(loop)}requestAnimationFrame(loop);
