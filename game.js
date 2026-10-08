@@ -34,10 +34,11 @@ addEventListener("mousemove",e=>{
 
 const playerImage=new Image();
 playerImage.crossOrigin="anonymous";
-playerImage.src="https://www.clipartmax.com/png/middle/77-773080_noob-roblox-profile.png";
+playerImage.src="https://devforum-uploads.s3.dualstack.us-east-2.amazonaws.com/uploads/original/4X/2/7/7/277fdfd558e1a41735ccc16397fb311a2be5231d.png";
 
 const wardrobeImage=new Image();
-wardrobeImage.src="assets/wardrobe.jpg";
+wardrobeImage.crossOrigin="anonymous";
+wardrobeImage.src="https://freedesignfile.com/image/preview/16802/wardrobe-drawing-clipart.png";
 
 const world={width:2800,height:900,floorY:690};
 const player={
