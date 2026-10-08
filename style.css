@@ -4,7 +4,7 @@ body{touch-action:none}
 #game{display:block;width:100%;height:100%;cursor:none}
 #hud{position:fixed;inset:0;pointer-events:none;color:#fff}
 .topbar{display:flex;align-items:center;gap:18px;padding:16px 18px}
-.room{font-weight:700;letter-spacing:1px}
+.room{display:none}
 .coins{font-weight:700}
 .healthWrap{width:220px;height:16px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);border-radius:999px;overflow:hidden;box-shadow:0 0 18px rgba(0,0,0,.35)}
 #healthBar{width:100%;height:100%;background:#49d66a;transition:width .15s linear}
