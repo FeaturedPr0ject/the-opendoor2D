@@ -2,10 +2,12 @@
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#090909;font-family:Arial,sans-serif}
 body{touch-action:none}
 #game{display:block;width:100%;height:100%;cursor:none}
-#hud{position:fixed;inset:0;pointer-events:none;color:#fff}
-.topbar{display:flex;align-items:center;gap:18px;padding:16px 18px}
-.room{display:none}
-.coins{font-weight:700}
-.healthWrap{width:220px;height:16px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);border-radius:999px;overflow:hidden;box-shadow:0 0 18px rgba(0,0,0,.35)}
-#healthBar{width:100%;height:100%;background:#49d66a;transition:width .15s linear}
-#hint{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);padding:8px 12px;border-radius:8px;background:rgba(0,0,0,.34);backdrop-filter:blur(8px);font-size:13px;opacity:.8}
+#hud{position:fixed;inset:0;pointer-events:none}
+.coinHud{position:absolute;top:16px;right:22px;display:flex;align-items:center;gap:7px;color:#fff;font-size:18px;font-weight:700;text-shadow:0 2px 5px #000}
+.coinIcon{font-size:18px}
+.healthHud{position:absolute;left:22px;bottom:22px;width:250px;height:18px;border-radius:4px;background:rgba(255,255,255,.12);border:2px solid rgba(255,244,190,.75);overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.5)}
+#healthBar{width:100%;height:100%;background:#f3df9b;transition:width .15s linear}
+.itemBar{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);display:flex;justify-content:center}
+.itemSlot{width:58px;height:58px;border-radius:8px;border:2px solid rgba(255,255,255,.35);background:rgba(18,18,18,.82);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 14px rgba(0,0,0,.5)}
+.itemSlot.active{border-color:rgba(255,255,255,.9)}
+.flashlightIcon{font-size:29px}
