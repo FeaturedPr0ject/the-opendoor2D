@@ -11,7 +11,13 @@
 <div id="hud">
   <div class="coinHud"><span class="coinIcon">🪙</span><span id="coinCount">0</span></div>
   <div class="healthHud"><div id="healthBar"></div></div>
-  <div class="itemBar"><div class="itemSlot active"><span class="flashlightIcon">🔦</span></div></div>
+  <div class="batteryHud"><div id="batteryBar"></div></div>
+  <div class="itemBar">
+    <div class="itemSlot active" title="Toggle flashlight">
+      <span class="flashlightIcon">🔦</span>
+      <span id="flashlightState">USED</span>
+    </div>
+  </div>
 </div>
 <script src="game.js"></script>
 </body>
