@@ -19,21 +19,18 @@ function battery(x,y){return{type:"battery",x,y,w:24,h:34,taken:false}}
 function overlaps(a,b,pad=30){return a.x<b.x+b.w+pad&&a.x+a.w+pad>b.x&&a.y<b.y+b.h+pad&&a.y+a.h+pad>b.y}
 function randomRoomObjects(){
  const result=[];
- const zones=[
-  {x:520,min:700,max:980,w:230,h:90,type:"table"},
-  {x:1010,min:1140,max:1400,w:145,h:216,type:"wardrobe"},
-  {x:1420,min:1530,max:1840,w:145,h:216,type:"wardrobe"}
- ];
- const order=zones.sort(()=>Math.random()-.5);
- for(const z of order){
+ const types=["table","wardrobe","wardrobe"];
+ for(const type of types.sort(()=>Math.random()-.5)){
   let placed=null;
-  for(let i=0;i<30&&!placed;i++){
-   const x=z.min+Math.random()*(z.max-z.min);
-   const y=z.type==="table"?600:474;
-   const candidate={x,y,w:z.w,h:z.h};
-   if(!result.some(o=>overlaps(candidate,o,70)))placed=candidate;
+  const w=type==="table"?230:145;
+  const h=type==="table"?90:216;
+  const y=type==="table"?600:474;
+  for(let i=0;i<60&&!placed;i++){
+   const x=520+Math.random()*1700;
+   const candidate={x,y,w,h};
+   if(!result.some(o=>overlaps(candidate,o,110)))placed=candidate;
   }
-  if(placed)result.push(z.type==="table"?table(placed.x,placed.y):wardrobe(placed.x,placed.y));
+  if(placed)result.push(type==="table"?table(placed.x,placed.y):wardrobe(placed.x,placed.y));
  }
  if(Math.random()<0.01){
   const bx=1900+Math.random()*520;
@@ -66,7 +63,7 @@ function nextRoom(){
  objects=randomRoomObjects();
  say("Room "+room);
 }
-function toggleLight(){if(player.hidden)return;if(lamp.on){lamp.on=false;say("Flashlight off")}else if(lamp.battery>0){lamp.on=true;say("Flashlight on")}else say("Battery empty")}
+function toggleLight(){if(player.hideState!=="none")return;if(lamp.on){lamp.on=false;say("Flashlight off")}else if(lamp.battery>0){lamp.on=true;say("Flashlight on")}else say("Battery empty")}
 function hud(){batteryBar.style.width=Math.max(0,lamp.battery)+"%";state.textContent=lamp.on?"USED":"NOT USED";slot.classList.toggle("active",lamp.on);slot.classList.toggle("empty",lamp.battery<=0)}
 function update(dt){
  if(player.hideState==="in"){
