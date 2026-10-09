@@ -111,11 +111,17 @@ function drawDoor(o){
  const open=o.open?Math.min(1,(player.x+player.w-o.x+75)/180):0;
  ctx.fillStyle="#21140e";ctx.fillRect(o.x,o.y,o.w,o.h);
  ctx.strokeStyle="#684329";ctx.lineWidth=6;ctx.strokeRect(o.x,o.y,o.w,o.h);
- ctx.fillStyle="#d8d2c7";ctx.beginPath();ctx.roundRect(o.x+16,o.y+68,o.w-32,74,12);ctx.fill();ctx.strokeStyle="#4a4640";ctx.lineWidth=3;ctx.stroke();
- ctx.fillStyle="#171615";ctx.font="700 38px Georgia,serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(room,o.x+o.w/2,o.y+105);
- ctx.fillStyle="#3a2417";ctx.globalAlpha=1-open;ctx.fillRect(o.x,o.y,o.w,o.h);
- ctx.globalAlpha=1;
- if(open>0){ctx.fillStyle="#6a452b";ctx.fillRect(o.x+o.w*(1-open),o.y,8,o.h)}
+ ctx.fillStyle="#3a2417";
+ ctx.save();
+ ctx.translate(o.x+o.w/2,o.y+o.h/2);
+ ctx.rotate(-open*1.15);
+ ctx.fillRect(-o.w/2,-o.h/2,o.w,o.h);
+ ctx.strokeStyle="#684329";ctx.lineWidth=6;ctx.strokeRect(-o.w/2,-o.h/2,o.w,o.h);
+ ctx.fillStyle="#d8d2c7";ctx.beginPath();ctx.roundRect(-o.w/2+16,-o.h/2+68,o.w-32,74,12);ctx.fill();
+ ctx.strokeStyle="#4a4640";ctx.lineWidth=3;ctx.stroke();
+ ctx.fillStyle="#171615";ctx.font="700 38px Georgia,serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(room,0,-o.h/2+105);
+ ctx.fillStyle="#c7a66b";ctx.beginPath();ctx.arc(o.w/2-18,0,5,0,Math.PI*2);ctx.fill();
+ ctx.restore();
  ctx.restore();
 }
 function drawRig(){
